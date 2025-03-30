@@ -105,11 +105,15 @@
     <script>
         function recordLocation(){
             navigator.geolocation.getCurrentPosition(success, fail);
-
         }
 
         function success(position){
             console.log(`${position.coords.latitude}, ${position.coords.longitude}`);
+            var lat = position.coords.latitude;
+            var long = position.coords.longitude;
+            localStorage.setItem('long',long);
+            localStorage.setItem('lat',lat);
+            window.location.href = "pressHelpPage.html";
         }
 
         function fail(){
