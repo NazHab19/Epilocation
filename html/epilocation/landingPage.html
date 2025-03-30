@@ -87,7 +87,7 @@
 
         <div class="overlay">
             <!-- Geo-Targeting Feature -->
-            <button class="help-button" onclick="getLocation()">
+            <button class="help-button" onclick="recordLocation()">
                 PRESS FOR HELP
             </button>
         </div>
@@ -102,41 +102,16 @@
 
     <!-- Geo-Targeting Script -->
     <script>
-        let map;
-
-        function initMap() {
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: 0, lng: 0 }, // Default center
-                zoom: 6, // Default zoom level
-            });
+        function recordLocation(){
+            navigator.geolocation.getCurrentPosition(success, fail);
         }
 
-        function getLocation() {
-          if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(showPosition, showError);
-          } else {
-              alert("Geolocation is not supported by this browser.");
-          }
+        function success(position){
+            console.log(`Lat: ${position.coords.latitude} Long: ${position.coords.longitude}`);
         }
 
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            const userLocation = { lat: lat, lng: lng };
-
-            map.setCenter(userLocation);
-            map.setZoom(14); // Zoom in closer
-
-            new google.maps.Marker({
-                position: userLocation,
-                map: map,
-                title: "Your Location",
-            });
-        }
-
-        function showError(error) {
-            alert("Geolocation error: " + error.message); // Improved error message
+        function fail(){
+            alert(`Position was not found.1`);
         }
     </script>
 
