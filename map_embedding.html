@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Add a Map with Markers using HTML</title>
+
+  </head>
+  <body>
+    <gmp-map
+      center="38.033554, -78.507980"
+      zoom="12"
+      map-id="DEMO_MAP_ID"
+      style="height: 400px"
+    >
+
+
+    <!-- 
+      The `defer` attribute causes the script to execute after the full HTML
+      document has been parsed. For non-blocking uses, avoiding race conditions,
+      and consistent behavior across browsers, consider loading using Promises. See
+      https://developers.google.com/maps/documentation/javascript/load-maps-js-api
+      for more information.
+      -->
+      <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxc0N-43gffA36ARO4O9h-mlNjwCFIPtc&libraries=maps,marker"
+      defer
+  ></script>
+  </body>
+</html>
