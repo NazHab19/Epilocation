@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EpiLocation</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,19 +15,21 @@
             padding: 0;
             display: flex;
             flex-direction: row;
+            height: 100vh;
         }
         .map-container {
             flex: 2;
             position: relative;
         }
-        .map-image {
+        #map {
             width: 100%;
-            height: auto;
+            height: 100%;
         }
         .content-container {
             flex: 1;
             padding: 20px;
             background-color: #f9f9f9;
+            overflow-y: auto;
         }
         h2 {
             margin-top: 0;
@@ -35,7 +41,7 @@
 </head>
 <body>
     <div class="map-container">
-        <img src="image.jpg" alt="Map with route and marker" class="map-image">
+        <div id="map"></div>
     </div>
     <div class="content-container">
         <h2>Steps:</h2>
@@ -60,5 +66,33 @@
             <li>Remove and massage the injection site for 10 seconds.</li>
         </ul>
     </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([38.0325, -78.5097], 17); 
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add a marker for the EpiPen location
+        const marker = L.marker([38.0325, -78.5097]).addTo(map);
+        marker.bindPopup("<b>EpiPen Location</b><br>Available here").openPopup();
+        
+        // Add a routing line (example route)
+        const routePoints = [
+            [38.0325, -78.5097], // Rice Hall
+            [38.0320, -78.5100], // Nearby point
+            [38.0315, -78.5105] // End point
+        ];
+        
+        const polyline = L.polyline(routePoints, {color: 'blue', weight: 5}).addTo(map);
+        
+        // Fit the map to show all route points
+        map.fitBounds(polyline.getBounds());
+    </script>
 </body>
 </html>
