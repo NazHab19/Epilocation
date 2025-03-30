@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epilocation - Emergency Help</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #d1d1d1;
+        }
+
+        .iphone-frame {
+            width: 323px; /* iPhone 14 width */
+            height: 690px; /* iPhone 14 height */
+            background-color: black;
+            border-radius: 50px;
+            border: 6px solid silver;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dynamic-island {
+            width: 120px;
+            height: 30px;
+            background-color: black;
+            border-radius: 20px;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .app-content {
+            flex: 1;
+            width: 100%;
+            background-image: url("images/snazzy-image.png"); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .help-button {
+            background-color: red;
+            color: white;
+            padding: 40px 40px; /* Increased button width */
+            font-size: 48px; /* Adjusted font size */
+            font-weight: bold;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .footer-links {
+            width: 100%;
+            text-align: center;
+            background-color: white; /* Added background color for clarity */
+            padding: 10px 0; /* Added padding */
+            display: flex; /* Flexbox for alignment */
+            justify-content: space-evenly; /* Space between links */
+        }
+
+        .footer-links a {
+            color: black; /* Text color */
+            text-decoration: none; /* Remove underline */
+            font-size: 14px; /* Font size adjustment */
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="dynamic-island"></div>
+        <div class="app-content">
+            <button class="help-button" onclick="recordLocation();">
+                PRESS FOR HELP
+            </button>
+        </div>
+        <div class="footer-links">
+            <a href="#">How do I use an Epipen?</a>
+            <a href="#">About</a>
+            <a href="#">Story</a>
+            <a href="#">Support</a>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function recordLocation() {
+          navigator.geolocation.getCurrentPosition(success, fail);
+
+          function success(position) {
+              const lat = position.coords.latitude; // Get latitude
+              const long = position.coords.longitude; // Get longitude
+
+              // Save location data to localStorage
+              localStorage.setItem('lat', lat);
+              localStorage.setItem('long', long);
+
+              // Redirect to help page
+              window.location.href = "pressHelpPage.html";
+          }
+
+          function fail() {
+              alert("Unable to retrieve your location. Please try again.");
+          }
+      }
+    </script>
+</body>
+</html>
