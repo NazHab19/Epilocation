@@ -125,7 +125,7 @@
         // Load facilities from TXT file
         async function loadFacilitiesFromFile() {
             try {
-                const response = await fetch('facilities.txt');
+                const response = await fetch('');
                 const text = await response.text();
                 
                 const lines = text.split('\n').filter(line => 
@@ -145,7 +145,7 @@
                 getUserLocation();
                 
             } catch (error) {
-                console.error('Error loading facilities file:', error);
+                //console.error('Error loading facilities file:', error);
                 useFallbackFacilities();
             }
         }
