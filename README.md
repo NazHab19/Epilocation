@@ -1,6 +1,4 @@
 # Epilocation
 Hoohacks 2025
 
-Tasks since 11:34 PM, Mar 29, 2025
-- Javascript button
-- Custom google map with clinic locations 
+All code files and content are located within this repository. The epilocation webpage files, functionality files, and dataset sources are all located within the html/epilocation directory. The images of the webpages are under html/epilocation/images. 
