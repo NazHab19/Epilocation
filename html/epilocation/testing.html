@@ -1,146 +1,98 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epilocation - Emergency Help</title>
+    <title>EpiLocation</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
-        body, html {
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
         }
-
-        .background {
+        .map-container {
+            flex: 2;
             position: relative;
-            width: 100%;
-            height: 100%;
-            background-image: url("images/snazzy-image.png"); 
-            background-size: cover;
-            background-position: center;
         }
-
-        .overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .help-button {
-            background-color: red;
-            color: white;
-            padding: 20px 40px;
-            font-size: 84px;
-            font-weight: bold;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .footer-links {
-            position: absolute;
-            bottom: 70px;
-            width: 100%;
-            text-align: center;
-            align-content: space-evenly
-        }
-
-        .footer-links a {
-            margin: 30px;
-            color: black;
-            text-decoration: Edge 12;
-            font-size: 30px;
-            align-content: space-evenly
-        }
-
-        /* Accessibility Features */
-        .help-button:hover {
-            background-color: darkred; /* High contrast for better visibility */
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .help-button {
-                font-size: 18px; /* Adjust button size for smaller screens */
-                padding: 15px 30px;
-                border-radius: 8px;
-            }
-        }
-
         #map {
             width: 100%;
             height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -2;  /* Make sure it's behind the button and icon */
+        }
+        .content-container {
+            flex: 1;
+            padding: 20px;
+            background-color: #f9f9f9;
+            overflow-y: auto;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .steps {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="background">
-        <div id="map"></div> <!-- Google Map Container -->
-
-        <div class="overlay">
-            <!-- Geo-Targeting Feature -->
-            <button class="help-button" onclick="getLocation()">
-                PRESS FOR HELP
-            </button>
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
+    <div class="content-container">
+        <h2>Steps:</h2>
+        <div class="steps">
+            <ol>
+                <li>Take a right after exiting the building</li>
+                <li>Continue on the footpath past two buildings</li>
+                <li>Take a left</li>
+                <li>Continue briefly until the first path on the right</li>
+                <li>Take a right</li>
+                <li>Continue past the building on the left</li>
+            </ol>
         </div>
-        <div class="footer-links">
-            <a href="/how-to-use-epipen">How do I use an Epipen?</a>
-            <a href="/about">About</a>
-            <a href="/story">Story</a>
-            <a href="/support">Support</a>
-            <a href="/contact">Contact</a>
-        </div>
+        <h2>How to Administer an EpiPen:</h2>
+        <p>Follow these steps carefully:</p>
+        <ul>
+            <li>Remove the EpiPen from its case.</li>
+            <li>Hold it firmly in your dominant hand.</li>
+            <li>Remove the safety cap.</li>
+            <li>Place the tip against the outer thigh (through clothing if necessary).</li>
+            <li>Push down firmly until you hear a click and hold for 3 seconds.</li>
+            <li>Remove and massage the injection site for 10 seconds.</li>
+        </ul>
     </div>
 
-    <!-- Geo-Targeting Script -->
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let map;
+        // Initialize the map
+        const map = L.map('map').setView([37.7749, -122.4194], 15); // Default coordinates (San Francisco)
 
-        function initMap() {
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: 0, lng: 0 }, // Default center
-                zoom: 6, // Default zoom level
-            });
-        }
-
-        function getLocation() {
-          if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(showPosition, showError);
-          } else {
-              alert("Geolocation is not supported by this browser.");
-          }
-        }
-
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            const userLocation = { lat: lat, lng: lng };
-
-            map.setCenter(userLocation);
-            map.setZoom(14); // Zoom in closer
-
-            new google.maps.Marker({
-                position: userLocation,
-                map: map,
-                title: "Your Location",
-            });
-        }
-
-        function showError(error) {
-            alert("Geolocation error: " + error.message); // Improved error message
-        }
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add a marker for the EpiPen location
+        const marker = L.marker([37.7749, -122.4194]).addTo(map);
+        marker.bindPopup("<b>EpiPen Location</b><br>Available here").openPopup();
+        
+        // Add a routing line (example route)
+        const routePoints = [
+            [37.7749, -122.4194], // Starting point
+            [37.7751, -122.4180], // Mid-point 1
+            [37.7760, -122.4175]  // End point
+        ];
+        
+        const polyline = L.polyline(routePoints, {color: 'blue', weight: 5}).addTo(map);
+        
+        // Fit the map to show all route points
+        map.fitBounds(polyline.getBounds());
     </script>
-
-    <!-- Replace YOUR_API_KEY with your actual API key -->
 </body>
 </html>
