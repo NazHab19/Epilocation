@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +17,7 @@
             position: relative;
             width: 100%;
             height: 100%;
-            background-image: url('{% static "../images/map_background.jpg" %}'); /* Updated to local image */
+            background-image: url(); /* Updated to local image */
             background-size: cover;
             background-position: center;
         }
@@ -74,7 +73,7 @@
     <div class="background">
         <div class="overlay">
             <!-- Geo-Targeting Feature -->
-            <button class="help-button" onclick="getLocation()">
+            <button class="help-button" onclick="recordLocation()">
                 PRESS FOR HELP
             </button>
         </div>
@@ -86,39 +85,17 @@
             <a href="contactPage.html" title="Contact">Contact</a>
         </div>
     </div>
-
-    <!-- Geo-Targeting Script -->
     <script>
-        function getLocation() {
-          if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(showPosition, showError);
-          } else {
-              alert("Geolocation is not supported by this browser.");
-          }
+        function recordLocation(){
+            navigator.geolocation.getCurrentPosition(success, fail);
         }
 
-        function showPosition(position) {
-          alert("Latitude: " + position.coords.latitude + 
-                "\nLongitude: " + position.coords.longitude);
-          // Add logic to send location data to server or API
-          window.location.href = ``;
+        function success(position){
+            console.log(`Lat: ${position.coords.latitude} Long: ${position.coords.longitude}`);
         }
 
-        function showError(error) {
-          switch(error.code) {
-              case error.PERMISSION_DENIED:
-                  alert("User denied the request for Geolocation.");
-                  break;
-              case error.POSITION_UNAVAILABLE:
-                  alert("Location information is unavailable.");
-                  break;
-              case error.TIMEOUT:
-                  alert("The request to get user location timed out.");
-                  break;
-              case error.UNKNOWN_ERROR:
-                  alert("An unknown error occurred.");
-                  break;
-          }
+        function fail(){
+            alert("No pos.");
         }
     </script>
 </body>
