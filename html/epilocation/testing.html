@@ -3,96 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EpiLocation</title>
+    <title>EpiPen Locator</title>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: row;
             height: 100vh;
         }
+        
+        /* Left sidebar with images */
+        .sidebar {
+            width: 25%;
+            background-color: #f8f9fa;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .sidebar img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Map container */
         .map-container {
-            flex: 2;
+            flex: 1;
             position: relative;
         }
+        
         #map {
-            width: 100%;
             height: 100%;
+            width: 100%;
         }
-        .content-container {
-            flex: 1;
-            padding: 20px;
-            background-color: #f9f9f9;
-            overflow-y: auto;
+        
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
-        h2 {
-            margin-top: 0;
-        }
-        .steps {
-            margin-bottom: 20px;
+        
+        .custom-popup .leaflet-popup-content {
+            margin: 13px 19px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
+    <!-- Left sidebar with images -->
+    <div class="sidebar">
+        <img src="./images/1_step.png" alt="Step 1">
+        <img src="./images/2_step.png" alt="Step 2">
+        <img src="./images/3_step.png" alt="Step 3">
+    </div>
+    
+    <!-- Map container -->
     <div class="map-container">
         <div id="map"></div>
     </div>
-    <div class="content-container">
-        <h2>Steps:</h2>
-        <div class="steps">
-            <ol>
-                <li>Take a right after exiting the building</li>
-                <li>Continue on the footpath past two buildings</li>
-                <li>Take a left</li>
-                <li>Continue briefly until the first path on the right</li>
-                <li>Take a right</li>
-                <li>Continue past the building on the left</li>
-            </ol>
-        </div>
-        <h2>How to Administer an EpiPen:</h2>
-        <p>Follow these steps carefully:</p>
-        <ul>
-            <li>Remove the EpiPen from its case.</li>
-            <li>Hold it firmly in your dominant hand.</li>
-            <li>Remove the safety cap.</li>
-            <li>Place the tip against the outer thigh (through clothing if necessary).</li>
-            <li>Push down firmly until you hear a click and hold for 3 seconds.</li>
-            <li>Remove and massage the injection site for 10 seconds.</li>
-        </ul>
-    </div>
 
-    <!-- Leaflet JavaScript -->
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // Initialize the map
-        const map = L.map('map').setView([37.7749, -122.4194], 15); // Default coordinates (San Francisco)
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
-        // Add OpenStreetMap tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        
-        // Add a marker for the EpiPen location
-        const marker = L.marker([37.7749, -122.4194]).addTo(map);
-        marker.bindPopup("<b>EpiPen Location</b><br>Available here").openPopup();
-        
-        // Add a routing line (example route)
-        const routePoints = [
-            [37.7749, -122.4194], // Starting point
-            [37.7751, -122.4180], // Mid-point 1
-            [37.7760, -122.4175]  // End point
-        ];
-        
-        const polyline = L.polyline(routePoints, {color: 'blue', weight: 5}).addTo(map);
-        
-        // Fit the map to show all route points
-        map.fitBounds(polyline.getBounds());
-    </script>
+    <!-- JavaScript for Map -->
+    <script>
+        let map;
+        let userMarker = null;
+        let routingControl = null;
+
+        // Custom markers
+        const blueIcon = L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        const redIcon = L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([38.0325, -78.5097], 16);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            loadFacilitiesFromFile();
+        }
+
+        // Load facilities from TXT file
+        async function loadFacilitiesFromFile() {
+            try {
+                const response = await fetch('facilities.txt');
+                const text = await response.text();
+
+                const lines = text.split('\n').filter(line => 
+                    line.trim() && !line.startsWith('#')
+                );
+
+                facilities = lines.map(line => {
+                    const parts = line.split(',');
+                    return {
+                        lat: parseFloat(parts[0]),
+                        lng: parseFloat(parts[1]),
+                        type: parts[2] || 'EpiPen'
+                    };
+                });
+
+                addFacilityMarkers();
+                getUserLocation();
+
+            } catch (error) {
+                console.error('Error loading facilities file:', error);
+                useFallbackFacilities();
+            }
+        }
+
+        // Fallback with sample data if file loading fails
+        function useFallbackFacilities() {
+           
+           // Same as previous implementation
+       }
+
+       initMap();
+   </script>
 </body>
 </html>
