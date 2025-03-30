@@ -177,54 +177,24 @@
         
         // Get user location
         function getUserLocation() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        const userLat = position.coords.latitude;
-                        const userLng = position.coords.longitude;
-                        
-                        // Add user marker
-                        userMarker = L.marker([userLat, userLng], {icon: redIcon})
-                            .bindPopup("Your Location")
-                            .addTo(map);
-                        
-                        // Find nearest facility
-                        findNearestFacility(L.latLng(userLat, userLng));
-                    },
-                    function(error) {
-                        console.error("Geolocation error:", error.message);
-                        
-                        // Allow clicking on map to set location if geolocation fails
-                        map.on('click', e => {
-                            if (userMarker) {
-                                userMarker.setLatLng(e.latlng);
-                            } else {
-                                userMarker = L.marker(e.latlng, {icon: redIcon})
-                                    .bindPopup("Your Location")
-                                    .addTo(map);
-                            }
-                            
-                            findNearestFacility(e.latlng);
-                        });
-                    }
-                );
-            } else {
-                // Geolocation not supported
-                alert("Your browser does not support geolocation. Click on the map to set your position.");
-                
-                map.on('click', e => {
-                    if (userMarker) {
-                        userMarker.setLatLng(e.latlng);
-                    } else {
-                        userMarker = L.marker(e.latlng, {icon: redIcon})
-                            .bindPopup("Your Location")
-                            .addTo(map);
-                    }
-                    
-                    findNearestFacility(e.latlng);
-                });
+            const userLat = localStorage.getItem(`myLat`);
+            const userLng = localStorage.getItem(`myLong`);
+
+            if(userLat == NaN){
+                console.log("Null value error.");
             }
-        }
+            if(userLng == NaN){
+                console.log("Null value error.");
+            }
+            
+            // Add user marker
+            userMarker = L.marker([userLat, userLng], {icon: redIcon})
+                .bindPopup("Your Location")
+                .addTo(map);
+            
+            // Find nearest facility
+            findNearestFacility(L.latLng(userLat, userLng));
+            }
         
         // Find nearest facility and route to it
         function findNearestFacility(userLoc) {

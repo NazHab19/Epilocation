@@ -111,8 +111,9 @@
             console.log(`${position.coords.latitude}, ${position.coords.longitude}`);
             var lat = position.coords.latitude;
             var long = position.coords.longitude;
-            localStorage.setItem('long',long);
-            localStorage.setItem('lat',lat);
+            localStorage.setItem(`myLong`,long);
+            localStorage.setItem(`myLat`,lat);
+
             window.location.href = "pressHelpPage.html";
         }
 
