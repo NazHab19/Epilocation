@@ -1,0 +1,14 @@
+Sources:
+Overpass-turbo data mining tool for open street map used for Overpass API queries and shows results on the map. Data for coordinates of locations with epipens:   https://overpass-turbo.eu/
+
+Google Maps API: For developing the map and embedding it onto webpages
+
+Open Street Map API: For developing the map and embedding it onto webpages
+
+Perplexity AI: Assisting in collaboration of project ideas 
+
+HTML Geolocation API:
+
+
+
+
